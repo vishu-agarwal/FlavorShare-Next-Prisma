@@ -150,6 +150,26 @@ async function main() {
       create: { name: "Salt" },
     }),
     prisma.ingredient.upsert({
+      where: { name: "Bananas" },
+      update: {},
+      create: { name: "Bananas" },
+    }),
+    prisma.ingredient.upsert({
+      where: { name: "Almond Flour" },
+      update: {},
+      create: { name: "Almond Flour" },
+    }),
+    prisma.ingredient.upsert({
+      where: { name: "Beef Chuck" },
+      update: {},
+      create: { name: "Beef Chuck" },
+    }),
+    prisma.ingredient.upsert({
+      where: { name: "Carrots" },
+      update: {},
+      create: { name: "Carrots" },
+    }),
+    prisma.ingredient.upsert({
       where: { name: "Black Pepper" },
       update: {},
       create: { name: "Black Pepper" },
@@ -601,29 +621,7 @@ async function main() {
     }),
   ]);
 
-  // Create additional ingredients for the new recipes
-  await Promise.all([
-    prisma.ingredient.upsert({
-      where: { name: "Beef Chuck" },
-      update: {},
-      create: { name: "Beef Chuck" },
-    }),
-    prisma.ingredient.upsert({
-      where: { name: "Carrots" },
-      update: {},
-      create: { name: "Carrots" },
-    }),
-    prisma.ingredient.upsert({
-      where: { name: "Bananas" },
-      update: {},
-      create: { name: "Bananas" },
-    }),
-    prisma.ingredient.upsert({
-      where: { name: "Almond Flour" },
-      update: {},
-      create: { name: "Almond Flour" },
-    }),
-  ]);
+  // Additional ingredients are now created in the initial ingredients section
 
   // Create ratings
   const ratings = await Promise.all([
