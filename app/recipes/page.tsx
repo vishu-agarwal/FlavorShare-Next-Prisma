@@ -2,13 +2,18 @@ import { prisma } from "@/lib/prisma"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Clock, Users, ChefHat, Star, Search } from "lucide-react"
+import { Clock, Users, ChefHat, Star } from "lucide-react"
 import Link from "next/link"
 import { Header } from "@/components/header"
+import { RecipeFilters } from "@/components/recipe-filters"
 import { generateMetadata as generateSEOMetadata } from "@/lib/seo"
 import type { Metadata } from "next"
+
+// Add ISR for better performance
+export const revalidate = 1800 // Revalidate every 30 minutes
+
+// Force dynamic rendering for search functionality
+export const dynamic = 'force-dynamic'
 
 async function getRecipes(searchParams: any) {
   const { search, category, difficulty } = searchParams
@@ -133,46 +138,7 @@ export default async function RecipesPage({
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 mb-6 sm:mb-8">
-          <form method="GET" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="relative sm:col-span-2 lg:col-span-1">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-              <Input
-                placeholder="Search recipes..."
-                className="pl-10 h-12"
-                defaultValue={searchParams.search}
-                name="search"
-              />
-            </div>
-            <Select name="category" defaultValue={searchParams.category || "all"}>
-              <SelectTrigger className="h-12">
-                <SelectValue placeholder="Category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                {categories.map((category: any) => (
-                  <SelectItem key={category.id} value={category.slug}>
-                    {category.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select name="difficulty" defaultValue={searchParams.difficulty || "all"}>
-              <SelectTrigger className="h-12">
-                <SelectValue placeholder="Difficulty" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Levels</SelectItem>
-                <SelectItem value="easy">Easy</SelectItem>
-                <SelectItem value="medium">Medium</SelectItem>
-                <SelectItem value="hard">Hard</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button type="submit" className="bg-orange-600 hover:bg-orange-700 h-12">
-              Apply Filters
-            </Button>
-          </form>
-        </div>
+        <RecipeFilters categories={categories} />
 
         {/* Results */}
         <div className="mb-4 sm:mb-6">

@@ -10,6 +10,21 @@ import { generateMetadata as generateSEOMetadata, generateRecipeStructuredData }
 import { SEO } from "@/components/seo"
 import type { Metadata } from "next"
 
+// Add ISR for better performance
+export const revalidate = 3600 // Revalidate every hour
+
+// Generate static params for better performance
+export async function generateStaticParams() {
+  const recipes = await prisma.recipe.findMany({
+    select: { id: true },
+    take: 100, // Generate static pages for first 100 recipes
+  })
+
+  return recipes.map((recipe: { id: string }) => ({
+    id: recipe.id,
+  }))
+}
+
 async function getRecipe(id: string) {
   const recipe = await prisma.recipe.findUnique({
     where: { id },

@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma"
+import { cachedQueries } from "@/lib/cache"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -8,28 +8,11 @@ import { Header } from "@/components/header"
 import { generateMetadata as generateSEOMetadata } from "@/lib/seo"
 import type { Metadata } from "next"
 
+// Add ISR (Incremental Static Regeneration)
+export const revalidate = 3600 // Revalidate every hour
+
 async function getRecipes() {
-  const recipes = await prisma.recipe.findMany({
-    include: {
-      author: true,
-      categories: {
-        include: {
-          category: true,
-        },
-      },
-      ratings: true,
-      _count: {
-        select: {
-          comments: true,
-          ratings: true,
-        },
-      },
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-    take: 12,
-  })
+  const recipes = await cachedQueries.getRecipes(12) as any[]
 
   return recipes.map((recipe: any) => ({
     ...recipe,

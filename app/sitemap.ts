@@ -15,7 +15,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Get all categories
   const categories = await prisma.category.findMany({
     select: {
-      id: true,
+      slug: true,
       updatedAt: true,
     },
   })
@@ -49,7 +49,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]
 
   // Recipe pages
-  const recipePages = recipes.map((recipe: { id: any; updatedAt: any }) => ({
+  const recipePages = recipes.map((recipe: { id: string; updatedAt: Date }) => ({
     url: `${baseUrl}/recipes/${recipe.id}`,
     lastModified: recipe.updatedAt,
     changeFrequency: 'weekly' as const,
@@ -57,8 +57,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }))
 
   // Category pages
-  const categoryPages = categories.map((category: { id: any; updatedAt: any }) => ({
-    url: `${baseUrl}/categories/${category.id}`,
+  const categoryPages = categories.map((category: { slug: string; updatedAt: Date }) => ({
+    url: `${baseUrl}/recipes?category=${category.slug}`,
     lastModified: category.updatedAt,
     changeFrequency: 'weekly' as const,
     priority: 0.6,
