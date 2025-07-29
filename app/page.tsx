@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button"
 import { Clock, Users, ChefHat, Star } from "lucide-react"
 import Link from "next/link"
 import { Header } from "@/components/header"
+import { generateMetadata as generateSEOMetadata } from "@/lib/seo"
+import type { Metadata } from "next"
 
 async function getRecipes() {
   const recipes = await prisma.recipe.findMany({
@@ -36,6 +38,29 @@ async function getRecipes() {
         ? recipe.ratings.reduce((sum: number, rating: any) => sum + rating.value, 0) / recipe.ratings.length
         : 0,
   }))
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  return generateSEOMetadata({
+    title: "FlavorShare - Share Your Favorite Recipes",
+    description: "Discover and share amazing recipes from home cooks around the world. Join our community of food lovers and explore thousands of delicious recipes.",
+    keywords: [
+      "recipes",
+      "cooking",
+      "food",
+      "home cooking",
+      "recipe sharing",
+      "culinary",
+      "kitchen",
+      "cooking community",
+      "food lovers",
+      "recipe discovery",
+      "home chefs",
+      "cooking inspiration"
+    ],
+    url: "/",
+    type: "website",
+  })
 }
 
 export default async function Home() {

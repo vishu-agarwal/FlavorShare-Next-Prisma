@@ -7,6 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Clock, Users, ChefHat, Star, Search } from "lucide-react"
 import Link from "next/link"
 import { Header } from "@/components/header"
+import { generateMetadata as generateSEOMetadata } from "@/lib/seo"
+import type { Metadata } from "next"
 
 async function getRecipes(searchParams: any) {
   const { search, category, difficulty } = searchParams
@@ -64,6 +66,50 @@ async function getRecipes(searchParams: any) {
 async function getCategories() {
   return await prisma.category.findMany({
     orderBy: { name: "asc" },
+  })
+}
+
+export async function generateMetadata({ searchParams }: { searchParams: { search?: string; category?: string; difficulty?: string } }): Promise<Metadata> {
+  const search = searchParams.search
+  const category = searchParams.category
+  const difficulty = searchParams.difficulty
+
+  let title = "All Recipes"
+  let description = "Discover amazing recipes from our community of home cooks and food lovers."
+
+  if (search) {
+    title = `Search Results for "${search}"`
+    description = `Find recipes matching "${search}" from our collection of delicious recipes.`
+  } else if (category && category !== "all") {
+    title = `${category.charAt(0).toUpperCase() + category.slice(1)} Recipes`
+    description = `Explore ${category} recipes from our community. Find the best ${category} dishes to cook at home.`
+  } else if (difficulty && difficulty !== "all") {
+    title = `${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)} Difficulty Recipes`
+    description = `Discover ${difficulty} recipes perfect for your skill level.`
+  }
+
+  const keywords = [
+    "recipes",
+    "cooking",
+    "food",
+    "home cooking",
+    "recipe collection",
+    "culinary",
+    "kitchen",
+    "cooking community",
+    "food lovers",
+    "recipe discovery",
+    ...(search ? [search] : []),
+    ...(category && category !== "all" ? [category] : []),
+    ...(difficulty && difficulty !== "all" ? [difficulty] : []),
+  ]
+
+  return generateSEOMetadata({
+    title,
+    description,
+    keywords,
+    url: "/recipes",
+    type: "website",
   })
 }
 

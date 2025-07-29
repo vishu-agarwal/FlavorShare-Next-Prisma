@@ -6,6 +6,9 @@ import { Clock, Users, ChefHat, Star, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { Header } from "@/components/header"
+import { generateMetadata as generateSEOMetadata, generateRecipeStructuredData } from "@/lib/seo"
+import { SEO } from "@/components/seo"
+import type { Metadata } from "next"
 
 async function getRecipe(id: string) {
   const recipe = await prisma.recipe.findUnique({
@@ -71,6 +74,43 @@ async function getRecipe(id: string) {
   }
 }
 
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+  const recipe = await getRecipe(params.id)
+  
+  if (!recipe) {
+    return {
+      title: 'Recipe Not Found',
+      description: 'The requested recipe could not be found.',
+    }
+  }
+
+  const categories = recipe.categories.map((cat: { category: { name: any } }) => cat.category.name).join(', ')
+  const keywords = [
+    recipe.title,
+    'recipe',
+    'cooking',
+    'food',
+    ...recipe.categories.map((cat: { category: { name: any } }) => cat.category.name),
+    recipe.difficulty,
+    `${recipe.prepTime + recipe.cookTime} minutes`,
+    `${recipe.servings} servings`,
+  ]
+
+  return generateSEOMetadata({
+    title: recipe.title,
+    description: recipe.description,
+    keywords,
+    image: '/placeholder.jpg',
+    url: `/recipes/${recipe.id}`,
+    type: 'recipe',
+    publishedTime: recipe.createdAt,
+    modifiedTime: recipe.updatedAt,
+    author: recipe.author.name,
+    section: categories,
+    tags: recipe.categories.map((cat: { category: { name: any } }) => cat.category.name),
+  })
+}
+
 export default async function RecipeDetailPage({
   params,
 }: {
@@ -82,9 +122,17 @@ export default async function RecipeDetailPage({
     notFound()
   }
 
+  const structuredData = generateRecipeStructuredData(recipe)
+  const breadcrumbs = [
+    { name: 'Home', url: '/' },
+    { name: 'Recipes', url: '/recipes' },
+    { name: recipe.title, url: `/recipes/${recipe.id}` },
+  ]
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
       <Header />
+      <SEO structuredData={structuredData} breadcrumbs={breadcrumbs} />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Back Button */}

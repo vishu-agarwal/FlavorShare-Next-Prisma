@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from "@/components/ui/sheet"
 import { Menu, ChefHat, X } from "lucide-react"
 
 export function MobileNav() {
@@ -24,6 +24,9 @@ export function MobileNav() {
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="w-[300px] sm:w-[400px]">
+        <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+        <SheetDescription className="sr-only">Mobile navigation menu for FlavorShare</SheetDescription>
+        
         <div className="flex items-center gap-2 mb-8">
           <ChefHat className="h-8 w-8 text-orange-600" />
           <h1 className="text-2xl font-bold text-gray-900">FlavorShare</h1>

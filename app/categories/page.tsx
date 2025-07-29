@@ -4,19 +4,45 @@ import { Badge } from "@/components/ui/badge"
 import { ChefHat, ArrowRight } from "lucide-react"
 import Link from "next/link"
 import { Header } from "@/components/header"
+import { generateMetadata as generateSEOMetadata } from "@/lib/seo"
+import type { Metadata } from "next"
 
 async function getCategories() {
-  return await prisma.category.findMany({
-    include: {
-      _count: {
-        select: {
-          recipes: true,
+  try {
+    return await prisma.category.findMany({
+      include: {
+        _count: {
+          select: {
+            recipes: true,
+          },
         },
       },
-    },
-    orderBy: {
-      name: "asc",
-    },
+      orderBy: {
+        name: "asc",
+      },
+    })
+  } catch (error) {
+    console.error("Error fetching categories:", error)
+    return []
+  }
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  return generateSEOMetadata({
+    title: "Recipe Categories",
+    description: "Browse recipes by category. Discover delicious recipes organized by meal type, cuisine, and dietary preferences.",
+    keywords: [
+      "recipe categories",
+      "food categories",
+      "meal types",
+      "cuisine types",
+      "dietary preferences",
+      "recipe organization",
+      "cooking categories",
+      "food classification"
+    ],
+    url: "/categories",
+    type: "website",
   })
 }
 
