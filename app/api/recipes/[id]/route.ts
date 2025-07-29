@@ -6,6 +6,12 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
+    // Check if we're in a build environment or if DATABASE_URL is not available
+    if (!process.env.DATABASE_URL) {
+      // Return 404 for build-time static analysis
+      return NextResponse.json({ error: "Recipe not found" }, { status: 404 })
+    }
+
     const recipe = await prisma.recipe.findUnique({
       where: { id: params.id },
       include: {
@@ -67,8 +73,14 @@ export async function GET(
       ...recipe,
       averageRating,
     })
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching recipe:", error)
+    
+    // Handle specific Prisma errors
+    if (error.code === "P1001" || error.code === "P1002") {
+      return NextResponse.json({ error: "Database connection failed" }, { status: 503 })
+    }
+    
     return NextResponse.json({ error: "Failed to fetch recipe" }, { status: 500 })
   }
 }

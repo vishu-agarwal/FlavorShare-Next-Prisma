@@ -10,82 +10,79 @@ import { generateMetadata as generateSEOMetadata, generateRecipeStructuredData }
 import { SEO } from "@/components/seo"
 import type { Metadata } from "next"
 
+// Force dynamic rendering to prevent build-time database calls
+export const dynamic = 'force-dynamic'
+
 // Add ISR for better performance
 export const revalidate = 3600 // Revalidate every hour
 
-// Generate static params for better performance
-export async function generateStaticParams() {
-  const recipes = await prisma.recipe.findMany({
-    select: { id: true },
-    take: 100, // Generate static pages for first 100 recipes
-  })
-
-  return recipes.map((recipe: { id: string }) => ({
-    id: recipe.id,
-  }))
-}
-
 async function getRecipe(id: string) {
-  const recipe = await prisma.recipe.findUnique({
-    where: { id },
-    include: {
-      author: {
-        select: {
-          id: true,
-          name: true,
-          avatar: true,
-          bio: true,
+  try {
+    const recipe = await prisma.recipe.findUnique({
+      where: { id },
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            avatar: true,
+            bio: true,
+          },
         },
-      },
-      ingredients: {
-        include: {
-          ingredient: true,
+        ingredients: {
+          include: {
+            ingredient: true,
+          },
         },
-      },
-      categories: {
-        include: {
-          category: true,
+        categories: {
+          include: {
+            category: true,
+          },
         },
-      },
-      ratings: {
-        include: {
-          user: {
-            select: {
-              id: true,
-              name: true,
+        ratings: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+              },
             },
           },
         },
-      },
-      comments: {
-        include: {
-          user: {
-            select: {
-              id: true,
-              name: true,
-              avatar: true,
+        comments: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                avatar: true,
+              },
             },
           },
-        },
-        orderBy: {
-          createdAt: "desc",
+          orderBy: {
+            createdAt: "desc",
+          },
         },
       },
-    },
-  })
+    })
 
-  if (!recipe) {
+    if (!recipe) {
+      return null
+    }
+
+    const averageRating =
+      recipe.ratings.length > 0
+        ? recipe.ratings.reduce((sum: number, rating: any) => sum + rating.value, 0) / recipe.ratings.length
+        : 0
+
+    return {
+      ...recipe,
+      averageRating,
+    }
+  } catch (error) {
+    console.error('Error fetching recipe:', error)
+    // Return null to trigger notFound() in the component
     return null
-  }
-
-  const averageRating =
-    recipe.ratings.length > 0
-      ? recipe.ratings.reduce((sum: number, rating: any) => sum + rating.value, 0) / recipe.ratings.length
-      : 0
-
-  return {
-    ...recipe,
-    averageRating,
   }
 }
 
