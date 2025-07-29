@@ -1,8 +1,10 @@
 import { prisma } from "@/lib/prisma"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Clock, Users, ChefHat, Star } from "lucide-react"
 import Link from "next/link"
+import { Header } from "@/components/header"
 
 async function getRecipes() {
   const recipes = await prisma.recipe.findMany({
@@ -41,72 +43,51 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center gap-2">
-              <ChefHat className="h-8 w-8 text-orange-600" />
-              <h1 className="text-2xl font-bold text-gray-900">FlavorShare</h1>
-            </div>
-            <nav className="flex items-center gap-6">
-              <Link href="/recipes" className="text-gray-600 hover:text-gray-900">
-                Recipes
-              </Link>
-              <Link href="/categories" className="text-gray-600 hover:text-gray-900">
-                Categories
-              </Link>
-              <Link href="/add-recipe" className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700">
-                Share Recipe
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       {/* Hero Section */}
-      <section className="py-20 text-center">
-        <div className="max-w-4xl mx-auto px-4">
-          <h2 className="text-5xl font-bold text-gray-900 mb-6">
+      <section className="py-12 sm:py-20 text-center px-4">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight">
             Share Your Culinary
             <span className="text-orange-600"> Masterpieces</span>
           </h2>
-          <p className="text-xl text-gray-600 mb-8">
+          <p className="text-lg sm:text-xl text-gray-600 mb-6 sm:mb-8 max-w-2xl mx-auto">
             Discover amazing recipes from home cooks around the world. Share your favorites and get inspired by others.
           </p>
-          <div className="flex justify-center gap-4">
-            <Link
-              href="/recipes"
-              className="bg-orange-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-orange-700"
-            >
-              Explore Recipes
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <Link href="/recipes">
+              <Button size="lg" className="w-full sm:w-auto bg-orange-600 hover:bg-orange-700 text-lg font-semibold px-8 py-3">
+                Explore Recipes
+              </Button>
             </Link>
-            <Link
-              href="/add-recipe"
-              className="border-2 border-orange-600 text-orange-600 px-8 py-3 rounded-lg text-lg font-semibold hover:bg-orange-50"
-            >
-              Share Your Recipe
+            <Link href="/add-recipe">
+              <Button size="lg" variant="outline" className="w-full sm:w-auto text-lg font-semibold px-8 py-3 border-2 border-orange-600 text-orange-600 hover:bg-orange-50">
+                Share Your Recipe
+              </Button>
             </Link>
           </div>
         </div>
       </section>
 
       {/* Featured Recipes */}
-      <section className="py-16 bg-white">
+      <section className="py-12 sm:py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h3 className="text-3xl font-bold text-gray-900 mb-8 text-center">Latest Recipes</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 sm:mb-8 text-center">Latest Recipes</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
             {recipes.map((recipe: any) => (
               <Link key={recipe.id} href={`/recipes/${recipe.id}`}>
-                <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full flex flex-col">
+                <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full flex flex-col group">
                   <div className="aspect-video bg-gradient-to-br from-orange-100 to-red-100 rounded-t-lg flex items-center justify-center">
-                    <ChefHat className="h-12 w-12 text-orange-400" />
+                    <ChefHat className="h-8 w-8 sm:h-12 sm:w-12 text-orange-400" />
                   </div>
                   <CardHeader className="pb-2 flex-shrink-0">
                     <div className="flex justify-between items-start mb-2">
-                      <CardTitle className="text-lg line-clamp-2">{recipe.title}</CardTitle>
+                      <CardTitle className="text-base sm:text-lg line-clamp-2 group-hover:text-orange-600 transition-colors">
+                        {recipe.title}
+                      </CardTitle>
                       {recipe.averageRating > 0 && (
-                        <div className="flex items-center gap-1 text-sm text-yellow-600">
+                        <div className="flex items-center gap-1 text-sm text-yellow-600 flex-shrink-0 ml-2">
                           <Star className="h-4 w-4 fill-current" />
                           <span>{recipe.averageRating.toFixed(1)}</span>
                         </div>
@@ -124,7 +105,7 @@ export default async function Home() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="flex-grow flex flex-col justify-end">
-                    <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
+                    <div className="flex items-center gap-3 sm:gap-4 text-sm text-gray-500 mb-3">
                       <div className="flex items-center gap-1">
                         <Clock className="h-4 w-4" />
                         <span>{recipe.prepTime + recipe.cookTime}m</span>
@@ -156,7 +137,7 @@ export default async function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
+      <footer className="bg-gray-900 text-white py-8 sm:py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-center gap-2 mb-4">
             <ChefHat className="h-6 w-6 text-orange-400" />

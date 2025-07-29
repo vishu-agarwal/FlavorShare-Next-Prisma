@@ -14,6 +14,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { ChefHat, Plus, Minus, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { useToast } from "@/hooks/use-toast"
+import { Header } from "@/components/header"
 
 interface Ingredient {
   name: string
@@ -137,102 +138,88 @@ export default function AddRecipePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/" className="flex items-center gap-2">
-              <ChefHat className="h-8 w-8 text-orange-600" />
-              <h1 className="text-2xl font-bold text-gray-900">FlavorShare</h1>
-            </Link>
-            <nav className="flex items-center gap-6">
-              <Link href="/recipes" className="text-gray-600 hover:text-gray-900">
-                Recipes
-              </Link>
-              <Link href="/categories" className="text-gray-600 hover:text-gray-900">
-                Categories
-              </Link>
-              <Link href="/add-recipe" className="text-orange-600 font-medium">
-                Share Recipe
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
+      <Header currentPage="/add-recipe" />
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Back Button */}
         <Link href="/recipes" className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6">
           <ArrowLeft className="h-4 w-4" />
-          Back to Recipes
+          <span className="text-sm sm:text-base">Back to Recipes</span>
         </Link>
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">Share Your Recipe</CardTitle>
+            <CardTitle className="text-xl sm:text-2xl">Share Your Recipe</CardTitle>
             <CardDescription>Share your favorite recipe with the FlavorShare community</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Basic Info */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="md:col-span-2">
-                  <Label htmlFor="title">Recipe Title *</Label>
+              <div className="space-y-4 sm:space-y-6">
+                <div>
+                  <Label htmlFor="title" className="text-base">Recipe Title *</Label>
                   <Input
                     id="title"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="Enter recipe title"
+                    className="h-12 mt-2"
                     required
                   />
                 </div>
-                <div className="md:col-span-2">
-                  <Label htmlFor="description">Description *</Label>
+                <div>
+                  <Label htmlFor="description" className="text-base">Description *</Label>
                   <Textarea
                     id="description"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Describe your recipe"
+                    className="mt-2 min-h-[100px]"
                     required
                   />
                 </div>
-                <div>
-                  <Label htmlFor="prepTime">Prep Time (minutes) *</Label>
-                  <Input
-                    id="prepTime"
-                    type="number"
-                    value={prepTime}
-                    onChange={(e) => setPrepTime(e.target.value)}
-                    placeholder="15"
-                    required
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div>
+                    <Label htmlFor="prepTime" className="text-base">Prep Time (minutes) *</Label>
+                    <Input
+                      id="prepTime"
+                      type="number"
+                      value={prepTime}
+                      onChange={(e) => setPrepTime(e.target.value)}
+                      placeholder="15"
+                      className="h-12 mt-2"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="cookTime" className="text-base">Cook Time (minutes) *</Label>
+                    <Input
+                      id="cookTime"
+                      type="number"
+                      value={cookTime}
+                      onChange={(e) => setCookTime(e.target.value)}
+                      placeholder="30"
+                      className="h-12 mt-2"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="servings" className="text-base">Servings *</Label>
+                    <Input
+                      id="servings"
+                      type="number"
+                      value={servings}
+                      onChange={(e) => setServings(e.target.value)}
+                      placeholder="4"
+                      className="h-12 mt-2"
+                      required
+                    />
+                  </div>
                 </div>
                 <div>
-                  <Label htmlFor="cookTime">Cook Time (minutes) *</Label>
-                  <Input
-                    id="cookTime"
-                    type="number"
-                    value={cookTime}
-                    onChange={(e) => setCookTime(e.target.value)}
-                    placeholder="30"
-                    required
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="servings">Servings *</Label>
-                  <Input
-                    id="servings"
-                    type="number"
-                    value={servings}
-                    onChange={(e) => setServings(e.target.value)}
-                    placeholder="4"
-                    required
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="difficulty">Difficulty *</Label>
+                  <Label htmlFor="difficulty" className="text-base">Difficulty *</Label>
                   <Select value={difficulty} onValueChange={setDifficulty} required>
-                    <SelectTrigger>
+                    <SelectTrigger className="h-12 mt-2">
                       <SelectValue placeholder="Select difficulty" />
                     </SelectTrigger>
                     <SelectContent>
@@ -246,16 +233,16 @@ export default function AddRecipePage() {
 
               {/* Categories */}
               <div>
-                <Label>Categories</Label>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-2">
+                <Label className="text-base">Categories</Label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-3">
                   {categories.map((category) => (
-                    <div key={category.id} className="flex items-center space-x-2">
+                    <div key={category.id} className="flex items-center space-x-3">
                       <Checkbox
                         id={category.id}
                         checked={selectedCategories.includes(category.id)}
                         onCheckedChange={(checked) => handleCategoryChange(category.id, checked as boolean)}
                       />
-                      <Label htmlFor={category.id}>{category.name}</Label>
+                      <Label htmlFor={category.id} className="text-sm sm:text-base">{category.name}</Label>
                     </div>
                   ))}
                 </div>
@@ -264,45 +251,49 @@ export default function AddRecipePage() {
               {/* Ingredients */}
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <Label>Ingredients *</Label>
-                  <Button type="button" onClick={addIngredient} size="sm" variant="outline">
+                  <Label className="text-base">Ingredients *</Label>
+                  <Button type="button" onClick={addIngredient} size="sm" variant="outline" className="h-10">
                     <Plus className="h-4 w-4 mr-2" />
                     Add Ingredient
                   </Button>
                 </div>
                 <div className="space-y-3">
                   {ingredients.map((ingredient, index) => (
-                    <div key={index} className="grid grid-cols-12 gap-2 items-end">
-                      <div className="col-span-5">
+                    <div key={index} className="grid grid-cols-1 sm:grid-cols-12 gap-2 items-end">
+                      <div className="sm:col-span-5">
                         <Input
                           placeholder="Ingredient name"
                           value={ingredient.name}
                           onChange={(e) => updateIngredient(index, "name", e.target.value)}
+                          className="h-12"
                           required
                         />
                       </div>
-                      <div className="col-span-3">
+                      <div className="sm:col-span-3">
                         <Input
                           placeholder="Quantity"
                           value={ingredient.quantity}
                           onChange={(e) => updateIngredient(index, "quantity", e.target.value)}
+                          className="h-12"
                           required
                         />
                       </div>
-                      <div className="col-span-3">
+                      <div className="sm:col-span-3">
                         <Input
                           placeholder="Unit"
                           value={ingredient.unit}
                           onChange={(e) => updateIngredient(index, "unit", e.target.value)}
+                          className="h-12"
                         />
                       </div>
-                      <div className="col-span-1">
+                      <div className="sm:col-span-1">
                         <Button
                           type="button"
                           onClick={() => removeIngredient(index)}
                           size="sm"
                           variant="outline"
                           disabled={ingredients.length === 1}
+                          className="h-12 w-full"
                         >
                           <Minus className="h-4 w-4" />
                         </Button>
@@ -315,23 +306,23 @@ export default function AddRecipePage() {
               {/* Instructions */}
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <Label>Instructions *</Label>
-                  <Button type="button" onClick={addInstruction} size="sm" variant="outline">
+                  <Label className="text-base">Instructions *</Label>
+                  <Button type="button" onClick={addInstruction} size="sm" variant="outline" className="h-10">
                     <Plus className="h-4 w-4 mr-2" />
                     Add Step
                   </Button>
                 </div>
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {instructions.map((instruction, index) => (
-                    <div key={index} className="flex gap-2 items-start">
-                      <div className="flex-shrink-0 w-8 h-8 bg-orange-600 text-white rounded-full flex items-center justify-center text-sm font-medium mt-1">
+                    <div key={index} className="flex gap-3 items-start">
+                      <div className="flex-shrink-0 w-8 h-8 bg-orange-600 text-white rounded-full flex items-center justify-center text-sm font-medium mt-2">
                         {index + 1}
                       </div>
                       <Textarea
                         placeholder={`Step ${index + 1} instructions`}
                         value={instruction}
                         onChange={(e) => updateInstruction(index, e.target.value)}
-                        className="flex-1"
+                        className="flex-1 min-h-[80px]"
                         required
                       />
                       <Button
@@ -340,7 +331,7 @@ export default function AddRecipePage() {
                         size="sm"
                         variant="outline"
                         disabled={instructions.length === 1}
-                        className="mt-1"
+                        className="mt-2 h-10 w-10 p-0"
                       >
                         <Minus className="h-4 w-4" />
                       </Button>
@@ -350,11 +341,11 @@ export default function AddRecipePage() {
               </div>
 
               {/* Submit Button */}
-              <div className="flex justify-end gap-4">
-                <Button type="button" variant="outline" onClick={() => router.back()}>
+              <div className="flex flex-col sm:flex-row justify-end gap-4 pt-6">
+                <Button type="button" variant="outline" onClick={() => router.back()} className="h-12">
                   Cancel
                 </Button>
-                <Button type="submit" disabled={isSubmitting} className="bg-orange-600 hover:bg-orange-700">
+                <Button type="submit" disabled={isSubmitting} className="bg-orange-600 hover:bg-orange-700 h-12">
                   {isSubmitting ? "Creating..." : "Share Recipe"}
                 </Button>
               </div>

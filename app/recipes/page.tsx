@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Clock, Users, ChefHat, Star, Search } from "lucide-react"
 import Link from "next/link"
+import { Header } from "@/components/header"
 
 async function getRecipes(searchParams: any) {
   const { search, category, difficulty } = searchParams
@@ -76,50 +77,29 @@ export default async function RecipesPage({
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/" className="flex items-center gap-2">
-              <ChefHat className="h-8 w-8 text-orange-600" />
-              <h1 className="text-2xl font-bold text-gray-900">FlavorShare</h1>
-            </Link>
-            <nav className="flex items-center gap-6">
-              <Link href="/recipes" className="text-orange-600 font-medium">
-                Recipes
-              </Link>
-              <Link href="/categories" className="text-gray-600 hover:text-gray-900">
-                Categories
-              </Link>
-              <Link href="/add-recipe" className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700">
-                Share Recipe
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
+      <Header currentPage="/recipes" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Page Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">All Recipes</h1>
-          <p className="text-xl text-gray-600">Discover amazing recipes from our community</p>
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2 sm:mb-4">All Recipes</h1>
+          <p className="text-lg sm:text-xl text-gray-600">Discover amazing recipes from our community</p>
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-          <form method="GET" className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="relative">
+        <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 mb-6 sm:mb-8">
+          <form method="GET" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="relative sm:col-span-2 lg:col-span-1">
               <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
               <Input
                 placeholder="Search recipes..."
-                className="pl-10"
+                className="pl-10 h-12"
                 defaultValue={searchParams.search}
                 name="search"
               />
             </div>
             <Select name="category" defaultValue={searchParams.category || "all"}>
-              <SelectTrigger>
+              <SelectTrigger className="h-12">
                 <SelectValue placeholder="Category" />
               </SelectTrigger>
               <SelectContent>
@@ -132,7 +112,7 @@ export default async function RecipesPage({
               </SelectContent>
             </Select>
             <Select name="difficulty" defaultValue={searchParams.difficulty || "all"}>
-              <SelectTrigger>
+              <SelectTrigger className="h-12">
                 <SelectValue placeholder="Difficulty" />
               </SelectTrigger>
               <SelectContent>
@@ -142,32 +122,34 @@ export default async function RecipesPage({
                 <SelectItem value="hard">Hard</SelectItem>
               </SelectContent>
             </Select>
-            <Button type="submit" className="bg-orange-600 hover:bg-orange-700">
+            <Button type="submit" className="bg-orange-600 hover:bg-orange-700 h-12">
               Apply Filters
             </Button>
           </form>
         </div>
 
         {/* Results */}
-        <div className="mb-6">
+        <div className="mb-4 sm:mb-6">
           <p className="text-gray-600">
             Found {recipes.length} recipe{recipes.length !== 1 ? "s" : ""}
           </p>
         </div>
 
         {/* Recipe Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
           {recipes.map((recipe: any) => (
             <Link key={recipe.id} href={`/recipes/${recipe.id}`}>
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full flex flex-col">
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full flex flex-col group">
                 <div className="aspect-video bg-gradient-to-br from-orange-100 to-red-100 rounded-t-lg flex items-center justify-center">
-                  <ChefHat className="h-12 w-12 text-orange-400" />
+                  <ChefHat className="h-8 w-8 sm:h-12 sm:w-12 text-orange-400" />
                 </div>
                 <CardHeader className="pb-2 flex-shrink-0">
                   <div className="flex justify-between items-start mb-2">
-                    <CardTitle className="text-lg line-clamp-2">{recipe.title}</CardTitle>
+                    <CardTitle className="text-base sm:text-lg line-clamp-2 group-hover:text-orange-600 transition-colors">
+                      {recipe.title}
+                    </CardTitle>
                     {recipe.averageRating > 0 && (
-                      <div className="flex items-center gap-1 text-sm text-yellow-600">
+                      <div className="flex items-center gap-1 text-sm text-yellow-600 flex-shrink-0 ml-2">
                         <Star className="h-4 w-4 fill-current" />
                         <span>{recipe.averageRating.toFixed(1)}</span>
                       </div>
@@ -185,7 +167,7 @@ export default async function RecipesPage({
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="flex-grow flex flex-col justify-end">
-                  <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
+                  <div className="flex items-center gap-3 sm:gap-4 text-sm text-gray-500 mb-3">
                     <div className="flex items-center gap-1">
                       <Clock className="h-4 w-4" />
                       <span>{recipe.prepTime + recipe.cookTime}m</span>
@@ -220,7 +202,9 @@ export default async function RecipesPage({
             <h3 className="text-xl font-semibold text-gray-900 mb-2">No recipes found</h3>
             <p className="text-gray-600 mb-6">Try adjusting your search criteria or browse all recipes.</p>
             <Link href="/add-recipe">
-              <Button className="bg-orange-600 hover:bg-orange-700">Share Your First Recipe</Button>
+              <Button size="lg" className="bg-orange-600 hover:bg-orange-700">
+                Share Your First Recipe
+              </Button>
             </Link>
           </div>
         )}

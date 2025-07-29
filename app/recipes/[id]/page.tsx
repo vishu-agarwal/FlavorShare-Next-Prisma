@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Clock, Users, ChefHat, Star, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { notFound } from "next/navigation"
+import { Header } from "@/components/header"
 
 async function getRecipe(id: string) {
   const recipe = await prisma.recipe.findUnique({
@@ -83,43 +84,22 @@ export default async function RecipeDetailPage({
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/" className="flex items-center gap-2">
-              <ChefHat className="h-8 w-8 text-orange-600" />
-              <h1 className="text-2xl font-bold text-gray-900">FlavorShare</h1>
-            </Link>
-            <nav className="flex items-center gap-6">
-              <Link href="/recipes" className="text-gray-600 hover:text-gray-900">
-                Recipes
-              </Link>
-              <Link href="/categories" className="text-gray-600 hover:text-gray-900">
-                Categories
-              </Link>
-              <Link href="/add-recipe" className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700">
-                Share Recipe
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
+      <Header />
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Back Button */}
         <Link href="/recipes" className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6">
           <ArrowLeft className="h-4 w-4" />
-          Back to Recipes
+          <span className="text-sm sm:text-base">Back to Recipes</span>
         </Link>
 
         {/* Recipe Header */}
-        <div className="bg-white rounded-lg shadow-sm p-8 mb-6">
-          <div className="flex flex-col lg:flex-row gap-8">
+        <div className="bg-white rounded-lg shadow-sm p-4 sm:p-8 mb-6">
+          <div className="flex flex-col lg:flex-row gap-6 sm:gap-8">
             {/* Recipe Image */}
             <div className="lg:w-1/2">
               <div className="aspect-video bg-gradient-to-br from-orange-100 to-red-100 rounded-lg flex items-center justify-center">
-                <ChefHat className="h-24 w-24 text-orange-400" />
+                <ChefHat className="h-16 w-16 sm:h-24 sm:w-24 text-orange-400" />
               </div>
             </div>
 
@@ -134,11 +114,11 @@ export default async function RecipeDetailPage({
                 <Badge variant="outline">{recipe.difficulty.toLowerCase()}</Badge>
               </div>
 
-              <h1 className="text-3xl font-bold text-gray-900 mb-4">{recipe.title}</h1>
-              <p className="text-gray-600 mb-6">{recipe.description}</p>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 sm:mb-4">{recipe.title}</h1>
+              <p className="text-gray-600 mb-4 sm:mb-6">{recipe.description}</p>
 
               {/* Recipe Stats */}
-              <div className="grid grid-cols-3 gap-4 mb-6">
+              <div className="grid grid-cols-3 gap-4 mb-4 sm:mb-6">
                 <div className="text-center">
                   <div className="flex items-center justify-center gap-1 text-gray-500 mb-1">
                     <Clock className="h-4 w-4" />
@@ -164,12 +144,12 @@ export default async function RecipeDetailPage({
 
               {/* Rating */}
               {recipe.averageRating > 0 && (
-                <div className="flex items-center gap-2 mb-6">
+                <div className="flex items-center gap-2 mb-4 sm:mb-6">
                   <div className="flex items-center gap-1">
                     {[1, 2, 3, 4, 5].map((star) => (
                       <Star
                         key={star}
-                        className={`h-5 w-5 ${star <= recipe.averageRating ? "text-yellow-400 fill-current" : "text-gray-300"
+                        className={`h-4 w-4 sm:h-5 sm:w-5 ${star <= recipe.averageRating ? "text-yellow-400 fill-current" : "text-gray-300"
                           }`}
                       />
                     ))}
@@ -201,14 +181,14 @@ export default async function RecipeDetailPage({
           <div className="lg:col-span-1">
             <Card>
               <CardHeader>
-                <CardTitle>Ingredients</CardTitle>
+                <CardTitle className="text-lg sm:text-xl">Ingredients</CardTitle>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2">
+                <ul className="space-y-3">
                   {recipe.ingredients.map((ingredient: any) => (
-                    <li key={ingredient.id} className="flex justify-between">
-                      <span>{ingredient.ingredient.name}</span>
-                      <span className="text-gray-500">
+                    <li key={ingredient.id} className="flex justify-between items-center py-2 border-b border-gray-100 last:border-b-0">
+                      <span className="font-medium">{ingredient.ingredient.name}</span>
+                      <span className="text-gray-500 text-sm">
                         {ingredient.quantity} {ingredient.unit}
                       </span>
                     </li>
@@ -222,16 +202,16 @@ export default async function RecipeDetailPage({
           <div className="lg:col-span-2">
             <Card>
               <CardHeader>
-                <CardTitle>Instructions</CardTitle>
+                <CardTitle className="text-lg sm:text-xl">Instructions</CardTitle>
               </CardHeader>
               <CardContent>
                 <ol className="space-y-4">
                   {recipe.instructions.map((instruction: string, index: number) => (
-                    <li key={index} className="flex gap-4">
+                    <li key={index} className="flex gap-3 sm:gap-4">
                       <div className="flex-shrink-0 w-8 h-8 bg-orange-600 text-white rounded-full flex items-center justify-center text-sm font-medium">
                         {index + 1}
                       </div>
-                      <p className="text-gray-700 pt-1">{instruction}</p>
+                      <p className="text-gray-700 pt-1 leading-relaxed">{instruction}</p>
                     </li>
                   ))}
                 </ol>
@@ -244,13 +224,13 @@ export default async function RecipeDetailPage({
         {recipe.comments.length > 0 && (
           <Card className="mt-6">
             <CardHeader>
-              <CardTitle>Comments ({recipe.comments.length})</CardTitle>
+              <CardTitle className="text-lg sm:text-xl">Comments ({recipe.comments.length})</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {recipe.comments.map((comment: any) => (
                   <div key={comment.id} className="flex gap-3">
-                    <Avatar className="w-8 h-8">
+                    <Avatar className="w-8 h-8 flex-shrink-0">
                       <AvatarImage src={comment.user.avatar || undefined} />
                       <AvatarFallback className="text-xs">{comment.user.name.charAt(0)}</AvatarFallback>
                     </Avatar>
@@ -261,7 +241,7 @@ export default async function RecipeDetailPage({
                           {new Date(comment.createdAt).toLocaleDateString()}
                         </span>
                       </div>
-                      <p className="text-gray-700 text-sm">{comment.content}</p>
+                      <p className="text-gray-700 text-sm leading-relaxed">{comment.content}</p>
                     </div>
                   </div>
                 ))}
