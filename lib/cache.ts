@@ -1,5 +1,3 @@
-import { prisma } from './prisma'
-
 // Simple in-memory cache for development
 const cache = new Map<string, { data: any; timestamp: number; ttl: number }>()
 
@@ -39,27 +37,30 @@ export const cachedQueries = {
   async getRecipes(limit: number = 12) {
     return cachedQuery(
       `${CACHE_KEYS.RECIPES}:${limit}`,
-      () => prisma.recipe.findMany({
-        include: {
-          author: true,
-          categories: {
-            include: {
-              category: true,
+      async () => {
+        const { prisma } = await import('./prisma')
+        return prisma.recipe.findMany({
+          include: {
+            author: true,
+            categories: {
+              include: {
+                category: true,
+              },
+            },
+            ratings: true,
+            _count: {
+              select: {
+                comments: true,
+                ratings: true,
+              },
             },
           },
-          ratings: true,
-          _count: {
-            select: {
-              comments: true,
-              ratings: true,
-            },
+          orderBy: {
+            createdAt: "desc",
           },
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-        take: limit,
-      }),
+          take: limit,
+        })
+      },
       1800000 // 30 minutes
     )
   },
@@ -67,53 +68,56 @@ export const cachedQueries = {
   async getRecipe(id: string) {
     return cachedQuery(
       CACHE_KEYS.RECIPE(id),
-      () => prisma.recipe.findUnique({
-        where: { id },
-        include: {
-          author: {
-            select: {
-              id: true,
-              name: true,
-              avatar: true,
-              bio: true,
+      async () => {
+        const { prisma } = await import('./prisma')
+        return prisma.recipe.findUnique({
+          where: { id },
+          include: {
+            author: {
+              select: {
+                id: true,
+                name: true,
+                avatar: true,
+                bio: true,
+              },
             },
-          },
-          ingredients: {
-            include: {
-              ingredient: true,
+            ingredients: {
+              include: {
+                ingredient: true,
+              },
             },
-          },
-          categories: {
-            include: {
-              category: true,
+            categories: {
+              include: {
+                category: true,
+              },
             },
-          },
-          ratings: {
-            include: {
-              user: {
-                select: {
-                  id: true,
-                  name: true,
+            ratings: {
+              include: {
+                user: {
+                  select: {
+                    id: true,
+                    name: true,
+                  },
                 },
               },
             },
-          },
-          comments: {
-            include: {
-              user: {
-                select: {
-                  id: true,
-                  name: true,
-                  avatar: true,
+            comments: {
+              include: {
+                user: {
+                  select: {
+                    id: true,
+                    name: true,
+                    avatar: true,
+                  },
                 },
               },
-            },
-            orderBy: {
-              createdAt: "desc",
+              orderBy: {
+                createdAt: "desc",
+              },
             },
           },
-        },
-      }),
+        })
+      },
       3600000 // 1 hour
     )
   },
@@ -121,9 +125,12 @@ export const cachedQueries = {
   async getCategories() {
     return cachedQuery(
       CACHE_KEYS.CATEGORIES,
-      () => prisma.category.findMany({
-        orderBy: { name: "asc" },
-      }),
+      async () => {
+        const { prisma } = await import('./prisma')
+        return prisma.category.findMany({
+          orderBy: { name: "asc" },
+        })
+      },
       3600000 // 1 hour
     )
   },
@@ -131,7 +138,10 @@ export const cachedQueries = {
   async getRecipeCount() {
     return cachedQuery(
       CACHE_KEYS.RECIPE_COUNT,
-      () => prisma.recipe.count(),
+      async () => {
+        const { prisma } = await import('./prisma')
+        return prisma.recipe.count()
+      },
       1800000 // 30 minutes
     )
   },

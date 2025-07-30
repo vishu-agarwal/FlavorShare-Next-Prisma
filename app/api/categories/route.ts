@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server"
-import { prisma } from "@/lib/prisma"
 
 export async function GET() {
   try {
@@ -8,6 +7,9 @@ export async function GET() {
       // Return empty array for build-time static analysis
       return NextResponse.json([])
     }
+
+    // Dynamic import to avoid build-time issues
+    const { prisma } = await import("@/lib/prisma")
 
     const categories = await prisma.category.findMany({
       include: {

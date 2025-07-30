@@ -12,15 +12,25 @@ import type { Metadata } from "next"
 export const revalidate = 3600 // Revalidate every hour
 
 async function getRecipes() {
-  const recipes = await cachedQueries.getRecipes(12) as any[]
+  try {
+    // Check if we're in a build environment or if DATABASE_URL is not available
+    if (!process.env.DATABASE_URL) {
+      return []
+    }
 
-  return recipes.map((recipe: any) => ({
-    ...recipe,
-    averageRating:
-      recipe.ratings.length > 0
-        ? recipe.ratings.reduce((sum: number, rating: any) => sum + rating.value, 0) / recipe.ratings.length
-        : 0,
-  }))
+    const recipes = await cachedQueries.getRecipes(12) as any[]
+
+    return recipes.map((recipe: any) => ({
+      ...recipe,
+      averageRating:
+        recipe.ratings.length > 0
+          ? recipe.ratings.reduce((sum: number, rating: any) => sum + rating.value, 0) / recipe.ratings.length
+          : 0,
+    }))
+  } catch (error) {
+    console.error("Error fetching recipes:", error)
+    return []
+  }
 }
 
 export async function generateMetadata(): Promise<Metadata> {

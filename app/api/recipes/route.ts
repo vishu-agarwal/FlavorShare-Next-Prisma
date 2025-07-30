@@ -1,4 +1,3 @@
-import { prisma } from "@/lib/prisma"
 import { NextResponse, NextRequest } from "next/server"
 
 export async function GET() {
@@ -8,6 +7,9 @@ export async function GET() {
       // Return empty array for build-time static analysis
       return NextResponse.json([])
     }
+
+    // Dynamic import to avoid build-time issues
+    const { prisma } = await import("@/lib/prisma")
 
     const recipes = await prisma.recipe.findMany({
       include: {
@@ -100,6 +102,9 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       )
     }
+
+    // Dynamic import to avoid build-time issues
+    const { prisma } = await import("@/lib/prisma")
 
     // Find categories by slug
     const categoryConnections = []

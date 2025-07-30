@@ -1,8 +1,41 @@
-import { prisma } from "@/lib/prisma"
 import { MetadataRoute } from "next"
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://flavorshare.com'
+
+  // Check if we're in a build environment or if DATABASE_URL is not available
+  if (!process.env.DATABASE_URL) {
+    // Return only static pages for build time
+    return [
+      {
+        url: baseUrl,
+        lastModified: new Date(),
+        changeFrequency: 'daily' as const,
+        priority: 1,
+      },
+      {
+        url: `${baseUrl}/recipes`,
+        lastModified: new Date(),
+        changeFrequency: 'daily' as const,
+        priority: 0.9,
+      },
+      {
+        url: `${baseUrl}/add-recipe`,
+        lastModified: new Date(),
+        changeFrequency: 'weekly' as const,
+        priority: 0.7,
+      },
+      {
+        url: `${baseUrl}/categories`,
+        lastModified: new Date(),
+        changeFrequency: 'weekly' as const,
+        priority: 0.8,
+      },
+    ]
+  }
+
+  // Dynamic import to avoid build-time issues
+  const { prisma } = await import("@/lib/prisma")
 
   // Get all recipes
   const recipes = await prisma.recipe.findMany({

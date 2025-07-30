@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server"
-import { prisma } from "@/lib/prisma"
 
 export async function GET() {
   try {
@@ -16,6 +15,9 @@ export async function GET() {
         updatedAt: new Date().toISOString(),
       })
     }
+
+    // Dynamic import to avoid build-time issues
+    const { prisma } = await import("@/lib/prisma")
 
     // Get or create a sample user for demo purposes
     let user = await prisma.user.findFirst({

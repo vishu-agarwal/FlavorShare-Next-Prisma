@@ -1,4 +1,3 @@
-import { prisma } from "@/lib/prisma"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ChefHat, ArrowRight } from "lucide-react"
@@ -9,6 +8,14 @@ import type { Metadata } from "next"
 
 async function getCategories() {
   try {
+    // Check if we're in a build environment or if DATABASE_URL is not available
+    if (!process.env.DATABASE_URL) {
+      return []
+    }
+
+    // Dynamic import to avoid build-time issues
+    const { prisma } = await import("@/lib/prisma")
+
     return await prisma.category.findMany({
       include: {
         _count: {

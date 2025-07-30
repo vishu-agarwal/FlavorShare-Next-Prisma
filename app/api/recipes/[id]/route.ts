@@ -1,4 +1,3 @@
-import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
 
 export async function GET(
@@ -11,6 +10,9 @@ export async function GET(
       // Return 404 for build-time static analysis
       return NextResponse.json({ error: "Recipe not found" }, { status: 404 })
     }
+
+    // Dynamic import to avoid build-time issues
+    const { prisma } = await import("@/lib/prisma")
 
     const recipe = await prisma.recipe.findUnique({
       where: { id: params.id },
